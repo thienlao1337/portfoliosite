@@ -1,0 +1,674 @@
+<title>Relay Build</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Karla:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f7f3ec;
+    --surface: #ffffff;
+    --surface-2: #efe8db;
+    --border: #ddd2bd;
+    --text: #211d17;
+    --text-muted: #6b6255;
+    --accent: #a85a1e;
+    --accent-soft: #f0ddc4;
+    --accent-2: #34586a;
+    --accent-2-soft: #dbe6e9;
+    --focus: #a85a1e;
+    --shadow: 0 1px 2px rgba(33,29,23,0.06), 0 8px 24px -12px rgba(33,29,23,0.18);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14120f;
+      --surface: #1c1914;
+      --surface-2: #24201a;
+      --border: #38322a;
+      --text: #f1ece3;
+      --text-muted: #a79c8c;
+      --accent: #dd9a52;
+      --accent-soft: #3a2c1c;
+      --accent-2: #82adbf;
+      --accent-2-soft: #22323a;
+      --focus: #dd9a52;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -14px rgba(0,0,0,0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #14120f;
+    --surface: #1c1914;
+    --surface-2: #24201a;
+    --border: #38322a;
+    --text: #f1ece3;
+    --text-muted: #a79c8c;
+    --accent: #dd9a52;
+    --accent-soft: #3a2c1c;
+    --accent-2: #82adbf;
+    --accent-2-soft: #22323a;
+    --focus: #dd9a52;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -14px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Karla', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  }
+
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 3px; }
+
+  h1, h2, h3 {
+    font-family: 'Spectral', ui-serif, Georgia, serif;
+    font-weight: 600;
+    text-wrap: balance;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---- nav ---- */
+  header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+  }
+  .brand {
+    font-family: 'Spectral', serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .brand .dot { color: var(--accent); }
+  .nav-controls { display: flex; align-items: center; gap: 14px; }
+
+  .lang-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .lang-toggle button {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+  }
+  .lang-toggle button[aria-pressed="true"] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 34px; height: 34px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+
+  /* ---- hero ---- */
+  .hero {
+    padding: 96px 0 88px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  @media (max-width: 780px) {
+    .hero-grid { grid-template-columns: 1fr; }
+  }
+  .hero h1 {
+    font-size: clamp(2.3rem, 4.4vw, 3.4rem);
+    line-height: 1.12;
+    margin-top: 14px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero p.lede {
+    margin-top: 22px;
+    max-width: 52ch;
+    color: var(--text-muted);
+    font-size: 1.08rem;
+  }
+  .hero-cta {
+    margin-top: 32px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary { background: var(--accent); color: var(--bg); }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-ghost { border-color: var(--border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* schematic device */
+  .device {
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .device svg { width: 100%; height: 100%; display: block; }
+  .device-caption {
+    position: absolute;
+    bottom: 14px; left: 14px; right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+  }
+  .pulse-dot {
+    fill: var(--accent);
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.35; r: 4; }
+    50% { opacity: 1; r: 6; }
+  }
+  .flow-line { stroke: var(--border); stroke-width: 1.5; fill: none; }
+  .flow-line.live { stroke: var(--accent-2); }
+
+  /* ---- section shell ---- */
+  section { padding: 76px 0; border-top: 1px solid var(--border); }
+  .section-head { max-width: 62ch; margin-bottom: 44px; }
+  .section-head h2 { font-size: clamp(1.6rem, 2.6vw, 2.1rem); margin-top: 10px; }
+  .section-head p { color: var(--text-muted); margin-top: 12px; }
+
+  /* ---- capabilities ---- */
+  .cap-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  @media (max-width: 780px) { .cap-grid { grid-template-columns: 1fr; } }
+  .cap-card {
+    background: var(--surface);
+    padding: 30px 26px;
+  }
+  .cap-card .num { font-family: 'JetBrains Mono', monospace; color: var(--accent-2); font-size: 0.85rem; }
+  .cap-card h3 { font-size: 1.15rem; margin-top: 14px; }
+  .cap-card p { color: var(--text-muted); margin-top: 10px; font-size: 0.96rem; }
+  .cap-card ul { margin: 16px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+  .cap-card li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 4px 9px;
+    border-radius: 5px;
+    color: var(--text-muted);
+  }
+
+  /* ---- process ---- */
+  .process-list {
+    display: grid;
+    gap: 0;
+    counter-reset: step;
+  }
+  .process-item {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 22px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+  }
+  .process-item:first-child { border-top: none; }
+  .process-num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 0.95rem;
+    padding-top: 3px;
+  }
+  .process-item h3 { font-size: 1.08rem; }
+  .process-item p { color: var(--text-muted); margin-top: 6px; max-width: 60ch; }
+
+  /* ---- work ---- */
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+  @media (max-width: 780px) { .work-grid { grid-template-columns: 1fr; } }
+  .work-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+  }
+  .work-thumb {
+    aspect-ratio: 16/10;
+    background: var(--surface-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .work-thumb svg { width: 100%; height: 100%; }
+  .work-body { padding: 22px 24px 26px; }
+  .work-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--accent-2);
+  }
+  .work-body h3 { margin-top: 8px; font-size: 1.2rem; }
+  .work-body p { color: var(--text-muted); margin-top: 8px; font-size: 0.95rem; }
+  .work-link {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: var(--accent);
+  }
+  .work-link .arrow { transition: transform 0.15s ease; }
+  .work-link:hover .arrow { transform: translateX(3px); }
+  .status-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--accent-2-soft);
+    color: var(--accent-2);
+    display: inline-block;
+    margin-top: 12px;
+  }
+
+  /* ---- skills strip ---- */
+  .skills-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .skill-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 8px 14px;
+    border-radius: 999px;
+    color: var(--text);
+  }
+
+  /* ---- closing ---- */
+  .closing {
+    text-align: left;
+  }
+  .closing-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 40px;
+    align-items: start;
+  }
+  @media (max-width: 780px) { .closing-grid { grid-template-columns: 1fr; } }
+  .closing h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); }
+  .closing p { color: var(--text-muted); margin-top: 16px; max-width: 52ch; }
+  .closing-note {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+  .closing-note strong { color: var(--text); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  [data-i18n] { transition: opacity 0.12s ease; }
+</style>
+
+<header class="nav">
+  <div class="wrap nav-row">
+    <div class="brand"><span class="dot">◆</span> Relay<span style="color:var(--text-muted); font-weight:400;">.build</span></div>
+    <div class="nav-controls">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-lang-btn="ua" aria-pressed="true">УКР</button>
+        <button type="button" data-lang-btn="en" aria-pressed="false">ENG</button>
+      </div>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="border-top:none;">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow" data-i18n data-ua="РОЗРОБКА · АВТОМАТИЗАЦІЯ · БОТИ" data-en="DEVELOPMENT · AUTOMATION · BOTS">РОЗРОБКА · АВТОМАТИЗАЦІЯ · БОТИ</p>
+        <h1 data-i18n data-ua='Перетворюю технічне завдання на <em>робочий продукт</em>.' data-en='I turn a spec into a <em>working product</em>.'>Перетворюю технічне завдання на <em>робочий продукт</em>.</h1>
+        <p class="lede" data-i18n data-ua="Сайти, Telegram-боти, скрипти автоматизації та інтеграції між сервісами. Без нескінченних узгоджень — чітке ТЗ, прозорий прогрес, готовність доопрацьовувати після здачі." data-en="Websites, Telegram bots, automation scripts, and service integrations. No endless back-and-forth — a clear spec, visible progress, and I stay around for refinement after delivery.">Сайти, Telegram-боти, скрипти автоматизації та інтеграції між сервісами. Без нескінченних узгоджень — чітке ТЗ, прозорий прогрес, готовність доопрацьовувати після здачі.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#work" data-i18n data-ua="Приклади робіт" data-en="See the work">Приклади робіт</a>
+          <a class="btn btn-ghost" href="#process" data-i18n data-ua="Як я працюю" data-en="How I work">Як я працюю</a>
+        </div>
+      </div>
+      <div class="device">
+        <svg viewBox="0 0 300 300" aria-hidden="true">
+          <rect x="0" y="0" width="300" height="300" fill="none"/>
+          <path class="flow-line" d="M40 60 H140 V140" />
+          <path class="flow-line" d="M40 150 H100 V220" />
+          <path class="flow-line live" d="M260 60 H180 V140 H140" />
+          <path class="flow-line" d="M260 220 H200 V150" />
+          <path class="flow-line live" d="M150 140 V180 H150" />
+          <rect x="20" y="40" width="40" height="40" rx="6" fill="none" stroke="var(--border)"/>
+          <rect x="20" y="130" width="40" height="40" rx="6" fill="none" stroke="var(--border)"/>
+          <rect x="240" y="40" width="40" height="40" rx="6" fill="none" stroke="var(--border)"/>
+          <rect x="240" y="200" width="40" height="40" rx="6" fill="none" stroke="var(--border)"/>
+          <rect x="120" y="120" width="60" height="60" rx="10" fill="var(--surface-2)" stroke="var(--accent-2)"/>
+          <circle class="pulse-dot" cx="150" cy="150" r="5" />
+        </svg>
+        <div class="device-caption">
+          <span data-i18n data-ua="СТАТУС: ОНЛАЙН" data-en="STATUS: ONLINE">СТАТУС: ОНЛАЙН</span>
+          <span>v1.0</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="capabilities">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-i18n data-ua="НАПРЯМКИ" data-en="AREAS">НАПРЯМКИ</p>
+        <h2 data-i18n data-ua="Три речі, які я роблю добре" data-en="Three things I do well">Три речі, які я роблю добре</h2>
+      </div>
+      <div class="cap-grid">
+        <div class="cap-card">
+          <p class="num">01</p>
+          <h3 data-i18n data-ua="Веб-розробка" data-en="Web development">Веб-розробка</h3>
+          <p data-i18n data-ua="Лендинги, сайти-візитки, невеликі каталоги та адмін-панелі — швидкі, адаптивні, без зайвої ваги." data-en="Landing pages, business sites, small catalogs and admin panels — fast, responsive, no unnecessary bloat.">Лендинги, сайти-візитки, невеликі каталоги та адмін-панелі — швидкі, адаптивні, без зайвої ваги.</p>
+          <ul>
+            <li>HTML/CSS</li><li>JavaScript</li><li>React</li><li>PHP</li>
+          </ul>
+        </div>
+        <div class="cap-card">
+          <p class="num">02</p>
+          <h3 data-i18n data-ua="Telegram-боти" data-en="Telegram bots">Telegram-боти</h3>
+          <p data-i18n data-ua="Від простого бота-помічника до багатофункціонального сервісу зі своєю базою даних та зовнішніми API." data-en="From a simple helper bot to a multi-feature service with its own database and external API integrations.">Від простого бота-помічника до багатофункціонального сервісу зі своєю базою даних та зовнішніми API.</p>
+          <ul>
+            <li>Python</li><li>aiogram</li><li>SQLite</li><li>REST API</li>
+          </ul>
+        </div>
+        <div class="cap-card">
+          <p class="num">03</p>
+          <h3 data-i18n data-ua="Автоматизація" data-en="Automation">Автоматизація</h3>
+          <p data-i18n data-ua="Парсинг даних, скрипти для рутинних задач, інтеграції між сервісами, макроси Excel/Google Sheets." data-en="Data parsing, scripts for routine tasks, service-to-service integrations, Excel/Google Sheets macros.">Парсинг даних, скрипти для рутинних задач, інтеграції між сервісами, макроси Excel/Google Sheets.</p>
+          <ul>
+            <li>Python</li><li>Selenium</li><li>n8n</li><li>Apps Script</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="process">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-i18n data-ua="ПРОЦЕС" data-en="PROCESS">ПРОЦЕС</p>
+        <h2 data-i18n data-ua="Як влаштована робота над проєктом" data-en="How a project actually runs">Як влаштована робота над проєктом</h2>
+      </div>
+      <div class="process-list">
+        <div class="process-item">
+          <div class="process-num">01</div>
+          <div>
+            <h3 data-i18n data-ua="Розбір ТЗ" data-en="Reading the spec">Розбір ТЗ</h3>
+            <p data-i18n data-ua="Уточнюю все, що неоднозначне, перш ніж братися за реалізацію — це економить час нам обом." data-en="I clarify anything ambiguous before starting — it saves time on both sides.">Уточнюю все, що неоднозначне, перш ніж братися за реалізацію — це економить час нам обом.</p>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">02</div>
+          <div>
+            <h3 data-i18n data-ua="Пропозиція рішення" data-en="Proposed approach">Пропозиція рішення</h3>
+            <p data-i18n data-ua="Опис підходу, стек, орієнтовні терміни — до того, як почнеться розробка." data-en="Approach, stack, and a rough timeline — before development starts.">Опис підходу, стек, орієнтовні терміни — до того, як почнеться розробка.</p>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">03</div>
+          <div>
+            <h3 data-i18n data-ua="Розробка з проміжними звітами" data-en="Development with progress updates">Розробка з проміжними звітами</h3>
+            <p data-i18n data-ua="Показую прогрес по ходу — жодного мовчання до самого дедлайну." data-en="Progress is visible along the way — no silence until the deadline.">Показую прогрес по ходу — жодного мовчання до самого дедлайну.</p>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">04</div>
+          <div>
+            <h3 data-i18n data-ua="Здача та доопрацювання" data-en="Delivery and refinement">Здача та доопрацювання</h3>
+            <p data-i18n data-ua="Після здачі залишаюсь на зв'язку для правок і рефакторингу — мета не «здати», а «влаштувати»." data-en="After delivery I stay available for edits and refactoring — the goal isn't to hand off, it's to get it right.">Після здачі залишаюсь на зв'язку для правок і рефакторингу — мета не «здати», а «влаштувати».</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-i18n data-ua="ПРИКЛАДИ" data-en="SELECTED WORK">ПРИКЛАДИ</p>
+        <h2 data-i18n data-ua="Пара речей, зроблених для прикладу" data-en="A couple of things built as samples">Пара речей, зроблених для прикладу</h2>
+        <p data-i18n data-ua="Демонстраційні проєкти — щоб показати підхід і якість коду, а не список реальних клієнтів." data-en="Demo projects — meant to show approach and code quality, not a client list.">Демонстраційні проєкти — щоб показати підхід і якість коду, а не список реальних клієнтів.</p>
+      </div>
+      <div class="work-grid">
+        <div class="work-card">
+          <div class="work-thumb">
+            <svg viewBox="0 0 400 250" aria-hidden="true">
+              <rect width="400" height="250" fill="var(--surface-2)"/>
+              <rect x="30" y="30" width="150" height="14" rx="3" fill="var(--border)"/>
+              <rect x="30" y="56" width="220" height="10" rx="3" fill="var(--border)"/>
+              <rect x="30" y="90" width="100" height="34" rx="6" fill="var(--accent)" opacity="0.85"/>
+              <rect x="30" y="150" width="340" height="70" rx="8" fill="none" stroke="var(--border)"/>
+              <circle cx="60" cy="185" r="12" fill="var(--accent-2)" opacity="0.6"/>
+              <rect x="85" y="175" width="120" height="8" rx="3" fill="var(--border)"/>
+              <rect x="85" y="192" width="80" height="8" rx="3" fill="var(--border)"/>
+            </svg>
+          </div>
+          <div class="work-body">
+            <p class="work-tag" data-i18n data-ua="TELEGRAM-БОТ" data-en="TELEGRAM BOT">TELEGRAM-БОТ</p>
+            <h3 data-i18n data-ua="Багатофункціональний асистент" data-en="Multi-feature assistant bot">Багатофункціональний асистент</h3>
+            <p data-i18n data-ua="Задачі та нагадування, курси валют і погода через зовнішні API, власна база даних, адмін-розсилка." data-en="Tasks and reminders, currency/weather via external APIs, its own database, admin broadcast.">Задачі та нагадування, курси валют і погода через зовнішні API, власна база даних, адмін-розсилка.</p>
+            <span class="status-chip" data-i18n data-ua="⏳ ДЕПЛОЙ У ПРОЦЕСІ" data-en="⏳ DEPLOYING">⏳ ДЕПЛОЙ У ПРОЦЕСІ</span>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb">
+            <svg viewBox="0 0 400 250" aria-hidden="true">
+              <rect width="400" height="250" fill="var(--surface-2)"/>
+              <rect x="0" y="0" width="400" height="36" fill="var(--surface)"/>
+              <circle cx="24" cy="18" r="5" fill="var(--border)"/>
+              <rect x="150" y="12" width="100" height="12" rx="3" fill="var(--border)"/>
+              <rect x="40" y="70" width="180" height="16" rx="3" fill="var(--border)"/>
+              <rect x="40" y="96" width="240" height="10" rx="3" fill="var(--border)"/>
+              <rect x="40" y="126" width="90" height="30" rx="6" fill="var(--accent)" opacity="0.85"/>
+              <rect x="270" y="60" width="100" height="100" rx="10" fill="none" stroke="var(--accent-2)"/>
+            </svg>
+          </div>
+          <div class="work-body">
+            <p class="work-tag" data-i18n data-ua="ВЕБ-САЙТ" data-en="WEBSITE">ВЕБ-САЙТ</p>
+            <h3 data-i18n data-ua="Ця сторінка" data-en="This page">Ця сторінка</h3>
+            <p data-i18n data-ua="Верстка, яку ви зараз бачите: адаптивна, з підтримкою світлої й темної теми та перемиканням мови." data-en="The layout you're looking at right now: responsive, with light/dark theme support and a language switch.">Верстка, яку ви зараз бачите: адаптивна, з підтримкою світлої й темної теми та перемиканням мови.</p>
+            <a class="work-link" href="#" onclick="document.querySelector('.theme-toggle').click(); return false;" data-i18n data-ua="Перемкнути тему" data-en="Try the theme toggle">Перемкнути тему <span class="arrow">→</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-i18n data-ua="СТЕК" data-en="STACK">СТЕК</p>
+        <h2 data-i18n data-ua="З чим працюю" data-en="What I work with">З чим працюю</h2>
+      </div>
+      <div class="skills-strip">
+        <span class="skill-pill">JavaScript</span>
+        <span class="skill-pill">TypeScript</span>
+        <span class="skill-pill">Python</span>
+        <span class="skill-pill">PHP</span>
+        <span class="skill-pill">HTML / CSS</span>
+        <span class="skill-pill">SQL</span>
+        <span class="skill-pill">Node.js</span>
+        <span class="skill-pill">React</span>
+        <span class="skill-pill">WordPress</span>
+        <span class="skill-pill">Telegram Bot API</span>
+        <span class="skill-pill">REST API</span>
+        <span class="skill-pill">Selenium</span>
+        <span class="skill-pill">n8n</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div class="wrap closing-grid">
+      <div>
+        <p class="eyebrow" data-i18n data-ua="ЗАМОВЛЕННЯ" data-en="GET IN TOUCH">ЗАМОВЛЕННЯ</p>
+        <h2 data-i18n data-ua="Опишіть задачу — розберемось, чи підходить" data-en="Describe the task — let's see if it's a fit">Опишіть задачу — розберемось, чи підходить</h2>
+        <p data-i18n data-ua="Найпростіше — написати мені прямо на Freelancehunt: скиньте ТЗ, і я оперативно скажу, чи берусь і за який термін." data-en="Easiest way is to message me directly on Freelancehunt: send the spec, and I'll quickly tell you whether I can take it on and by when.">Найпростіше — написати мені прямо на Freelancehunt: скиньте ТЗ, і я оперативно скажу, чи берусь і за який термін.</p>
+      </div>
+      <div class="closing-note">
+        <strong data-i18n data-ua="Примітка" data-en="Note">Примітка</strong>
+        <p style="margin-top:8px;" data-i18n data-ua="Ця сторінка — портфоліо-приклад верстки, а не діюча компанія. Контакти навмисно не вказані тут — пишіть через профіль на біржі." data-en="This page is a portfolio sample of front-end work, not a registered business. Contact details are intentionally left out here — reach out via the marketplace profile instead.">Ця сторінка — портфоліо-приклад верстки, а не діюча компанія. Контакти навмисно не вказані тут — пишіть через профіль на біржі.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;">
+    <span data-i18n data-ua="Портфоліо-сторінка · зроблено як приклад роботи" data-en="Portfolio page · built as a work sample">Портфоліо-сторінка · зроблено як приклад роботи</span>
+    <span>Relay.build</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var toggle = document.getElementById('themeToggle');
+    var icon = document.getElementById('themeIcon');
+
+    function systemPrefersDark() {
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    function currentIsDark() {
+      var attr = root.getAttribute('data-theme');
+      if (attr === 'dark') return true;
+      if (attr === 'light') return false;
+      return systemPrefersDark();
+    }
+    function paintIcon(isDark) {
+      icon.innerHTML = isDark
+        ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>'
+        : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+    }
+    paintIcon(currentIsDark());
+    toggle.addEventListener('click', function () {
+      var next = currentIsDark() ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      paintIcon(next === 'dark');
+    });
+
+    var buttons = document.querySelectorAll('[data-lang-btn]');
+    var nodes = document.querySelectorAll('[data-i18n]');
+    function setLang(lang) {
+      nodes.forEach(function (n) {
+        var val = n.getAttribute('data-' + lang);
+        if (val !== null) n.innerHTML = val;
+      });
+      buttons.forEach(function (b) {
+        b.setAttribute('aria-pressed', b.getAttribute('data-lang-btn') === lang ? 'true' : 'false');
+      });
+      document.documentElement.lang = lang === 'ua' ? 'uk' : 'en';
+    }
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () { setLang(b.getAttribute('data-lang-btn')); });
+    });
+  })();
+</script>
